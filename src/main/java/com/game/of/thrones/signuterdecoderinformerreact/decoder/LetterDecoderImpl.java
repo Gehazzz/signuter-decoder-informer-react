@@ -12,6 +12,7 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.SynchronousSink;
+import reactor.core.scheduler.Schedulers;
 
 import java.lang.reflect.Field;
 
@@ -27,8 +28,8 @@ public class LetterDecoderImpl implements LetterDecoder {
     @Override
     public Mono<ServerResponse> decode(ServerRequest serverRequest) {
         Mono<Void> result = serverRequest.bodyToFlux(Letter.class)
+                .parallel().runOn(Schedulers.parallel()).sequential()
                 .handle(this::handleLetter)
-                //.subscribeOn(Schedulers.parallel())
                 .then();
         return ServerResponse.ok().build(result);
     }
@@ -41,6 +42,7 @@ public class LetterDecoderImpl implements LetterDecoder {
         DecodedLetter decodedLetter = DecodedLetter.builder().author(author).location(letter.getLocation()).content(letter.getContent()).build();
         long end = System.currentTimeMillis();
         speedAdjuster.newDelay(end-start);
+        log.info(String.valueOf(Thread.currentThread()));
         log.info(decodedLetter + " was sent to police");
     }
 
