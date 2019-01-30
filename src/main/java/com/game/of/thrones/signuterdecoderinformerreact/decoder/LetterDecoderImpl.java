@@ -54,12 +54,12 @@ public class LetterDecoderImpl implements LetterDecoder {
     }
 
     private void notifyLetterWillBeDecoded(Letter letter) {
-        String message = "We started letter - " + letter.getId() + "decoding at: " + LocalDateTime.now() + " it will take some time";
+        String message = "STARTED: We started letter - " + letter.getId() + "decoding at: " + LocalDateTime.now() + " it will take some time";
         notifier.sendNotification(Notification.builder().letterId(letter.getId()).message(message).build());
     }
 
     private void notifyLetterDecoded(Letter letter) {
-        String message = ("Letter - " + letter.getId() + "decoded at "  + LocalDateTime.now());
+        String message = ("FINISHED: Letter - " + letter.getId() + " decoded at "  + LocalDateTime.now());
         notifier.sendNotification(Notification.builder().letterId(letter.getId()).message(message).build());
     }
 
