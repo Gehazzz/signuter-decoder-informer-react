@@ -1,5 +1,6 @@
 package com.game.of.thrones.signuterdecoderinformerreact.adjuster;
 
+import com.game.of.thrones.signuterdecoderinformerreact.config.LocationProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,8 +17,8 @@ import java.util.concurrent.atomic.AtomicLong;
 @RequiredArgsConstructor
 @Slf4j
 public class SpeedAdjusterService {
-    private final WebClient webClient = WebClient.builder().build();
-    private final AdjustmentProperties adjustmentProperties;
+    private final WebClient webClient;
+    private final LocationProperties locationProperties;
     private AtomicLong lastDelay = new AtomicLong(Long.MIN_VALUE);
     private AtomicLong delta = new AtomicLong(10);
 
@@ -34,7 +35,7 @@ public class SpeedAdjusterService {
     }
 
     private void requestForChangeSpeed(long delay) {
-            webClient.get().uri(adjustmentProperties.getUrl() + "/" + delay / adjustmentProperties.getNumberOfThreads())
+            webClient.get().uri(locationProperties.getDelay() + "/" + delay / locationProperties.getNumberOfThreads())
                     .retrieve().onStatus(HttpStatus::is2xxSuccessful, response -> {
                         log.info("delay was requested for " + delay);
                         return Mono.empty();

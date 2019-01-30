@@ -1,4 +1,4 @@
-package com.game.of.thrones.signuterdecoderinformerreact.adjuster;
+package com.game.of.thrones.signuterdecoderinformerreact.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -8,7 +8,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Data
 @ConfigurationProperties("datasender.location")
-public class AdjustmentProperties {
-    private String url;
+public class LocationProperties {
+    private String delay;
+    private String notification;
     private int numberOfThreads=1;
 }

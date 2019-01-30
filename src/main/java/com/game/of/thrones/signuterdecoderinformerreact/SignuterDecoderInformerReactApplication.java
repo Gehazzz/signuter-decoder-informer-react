@@ -1,13 +1,13 @@
 package com.game.of.thrones.signuterdecoderinformerreact;
 
-import com.game.of.thrones.signuterdecoderinformerreact.adjuster.AdjustmentProperties;
+import com.game.of.thrones.signuterdecoderinformerreact.config.LocationProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.web.reactive.config.EnableWebFlux;
 
 @EnableWebFlux
-@EnableConfigurationProperties(AdjustmentProperties.class)
+@EnableConfigurationProperties(LocationProperties.class)
 @SpringBootApplication
 public class SignuterDecoderInformerReactApplication {
 
