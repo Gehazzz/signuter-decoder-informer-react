@@ -29,7 +29,7 @@ public class LetterDecoderImpl implements LetterDecoder {
     private Map<String, Notifier> notifiers;
 
     @Setter
-    private long delay=10000;
+    private long delay=1;
 
     @Override
     public Mono<ServerResponse> decode(ServerRequest serverRequest) {
@@ -47,8 +47,7 @@ public class LetterDecoderImpl implements LetterDecoder {
         delay();
         String author = getAuthor(letter);
         DecodedLetter decodedLetter = DecodedLetter.builder().author(author).location(letter.getLocation()).content(letter.getContent()).build();
-        String message = decodedLetter.getAuthor() + " does this sender pose a threat?";
-        notifiers.get("Guard").sendNotification(Notification.builder().letterId(letter.getId()).message(message).build());
+        notifyGuard(decodedLetter);
         long end = System.currentTimeMillis();
         speedAdjuster.newDelay(end-start);
         sink.next(letter);
@@ -64,6 +63,11 @@ public class LetterDecoderImpl implements LetterDecoder {
     private void notifyLetterDecoded(Letter letter) {
         String message = ("FINISHED: Letter - " + letter.getId() + " decoded at "  + LocalDateTime.now() + "and sent to guard");
         notifiers.get("Status").sendNotification(Notification.builder().letterId(letter.getId()).message(message).build());
+    }
+
+    private void notifyGuard(DecodedLetter decodedLetter){
+        String message = decodedLetter.getAuthor() + " does this sender pose a threat?";
+        notifiers.get("Guard").sendNotification(Notification.builder().letterId(decodedLetter.getId()).message(message).build());
     }
 
     @SneakyThrows

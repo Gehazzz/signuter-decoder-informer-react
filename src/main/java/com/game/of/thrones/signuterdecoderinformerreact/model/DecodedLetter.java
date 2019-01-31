@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DecodedLetter {
+    private String id;
     private String author;
     private String content;
     private String location;
