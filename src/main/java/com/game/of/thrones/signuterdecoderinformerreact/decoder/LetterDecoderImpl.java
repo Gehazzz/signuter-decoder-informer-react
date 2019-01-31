@@ -4,7 +4,7 @@ import com.game.of.thrones.signuterdecoderinformerreact.adjuster.SpeedAdjusterSe
 import com.game.of.thrones.signuterdecoderinformerreact.model.DecodedLetter;
 import com.game.of.thrones.signuterdecoderinformerreact.model.Letter;
 import com.game.of.thrones.signuterdecoderinformerreact.model.Notification;
-import com.game.of.thrones.signuterdecoderinformerreact.notifier.LetterDecodingStatusNotifier;
+import com.game.of.thrones.signuterdecoderinformerreact.notifier.Notifier;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +18,7 @@ import reactor.core.scheduler.Schedulers;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -25,7 +26,7 @@ public class LetterDecoderImpl implements LetterDecoder {
     @Autowired
     private SpeedAdjusterService speedAdjuster;
     @Autowired
-    private LetterDecodingStatusNotifier notifier;
+    private Map<String, Notifier> notifiers;
 
     @Setter
     private long delay=10000;
@@ -46,6 +47,8 @@ public class LetterDecoderImpl implements LetterDecoder {
         delay();
         String author = getAuthor(letter);
         DecodedLetter decodedLetter = DecodedLetter.builder().author(author).location(letter.getLocation()).content(letter.getContent()).build();
+        String message = decodedLetter.getAuthor() + " does this sender pose a threat?";
+        notifiers.get("Guard").sendNotification(Notification.builder().letterId(letter.getId()).message(message).build());
         long end = System.currentTimeMillis();
         speedAdjuster.newDelay(end-start);
         sink.next(letter);
@@ -55,12 +58,12 @@ public class LetterDecoderImpl implements LetterDecoder {
 
     private void notifyLetterWillBeDecoded(Letter letter) {
         String message = "STARTED: We started letter - " + letter.getId() + "decoding at: " + LocalDateTime.now() + " it will take some time";
-        notifier.sendNotification(Notification.builder().letterId(letter.getId()).message(message).build());
+        notifiers.get("Status").sendNotification(Notification.builder().letterId(letter.getId()).message(message).build());
     }
 
     private void notifyLetterDecoded(Letter letter) {
-        String message = ("FINISHED: Letter - " + letter.getId() + " decoded at "  + LocalDateTime.now());
-        notifier.sendNotification(Notification.builder().letterId(letter.getId()).message(message).build());
+        String message = ("FINISHED: Letter - " + letter.getId() + " decoded at "  + LocalDateTime.now() + "and sent to guard");
+        notifiers.get("Status").sendNotification(Notification.builder().letterId(letter.getId()).message(message).build());
     }
 
     @SneakyThrows

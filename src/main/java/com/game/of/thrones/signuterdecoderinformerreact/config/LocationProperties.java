@@ -10,6 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("datasender.location")
 public class LocationProperties {
     private String delay;
-    private String notification;
+    private String status;
+    private String guard;
     private int numberOfThreads=1;
 }
